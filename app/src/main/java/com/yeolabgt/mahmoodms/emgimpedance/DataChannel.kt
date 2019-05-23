@@ -1,4 +1,4 @@
-package com.yeolabgt.mahmoodms.ecg2chdemo
+package com.yeolabgt.mahmoodms.emgimpedance
 
 import com.google.common.primitives.Doubles
 
@@ -53,15 +53,6 @@ internal class DataChannel(var chEnabled: Boolean, MSBFirst: Boolean, //Classifi
             dataBufferDouble.copyInto(this.classificationBuffer, this.classificationBufferSize - newDataPoints, 0, newDataPoints)
         }
     }
-
-//    private fun addToBuffer(a: Double) {
-//        if (this.classificationBufferSize > 0) {
-//            System.arraycopy(this.classificationBuffer, 1, this.classificationBuffer, 0, this.classificationBufferSize - 1) //shift backwards
-//            System.arraycopy(this.classificationBufferFloats, 1, this.classificationBufferFloats, 0, this.classificationBufferSize - 1) //shift backwards
-//            this.classificationBuffer[this.classificationBufferSize - 1] = a //add to front:
-//            this.classificationBufferFloats[this.classificationBufferSize - 1] = a.toFloat()
-//        }
-//    }
 
     fun resetBuffer() {
         this.dataBufferDoubles = null

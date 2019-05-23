@@ -16,7 +16,7 @@
 
 extern "C" {
 JNIEXPORT jdoubleArray JNICALL
-Java_com_yeolabgt_mahmoodms_ecg2chdemo_DeviceControlActivity_jecgBandStopFilter(
+Java_com_yeolabgt_mahmoodms_emgimpedance_DeviceControlActivity_jecgBandStopFilter(
         JNIEnv *env, jobject jobject1, jdoubleArray data) {
     jdouble *X1 = env->GetDoubleArrayElements(data, NULL);
     double Y[1000]; // First two values = Y; last 499 = cPSD
@@ -31,7 +31,7 @@ Java_com_yeolabgt_mahmoodms_ecg2chdemo_DeviceControlActivity_jecgBandStopFilter(
 
 extern "C" {
 JNIEXPORT jdoubleArray JNICALL
-Java_com_yeolabgt_mahmoodms_ecg2chdemo_DeviceControlActivity_jdownSample(
+Java_com_yeolabgt_mahmoodms_emgimpedance_DeviceControlActivity_jdownSample(
         JNIEnv *env, jobject jobject1, jdoubleArray data, jint Fs) {
     jdouble *X1 = env->GetDoubleArrayElements(data, NULL);
     int Xsize[1] = {Fs*4};
@@ -48,7 +48,7 @@ Java_com_yeolabgt_mahmoodms_ecg2chdemo_DeviceControlActivity_jdownSample(
 
 extern "C" {
 JNIEXPORT jfloatArray JNICALL
-Java_com_yeolabgt_mahmoodms_ecg2chdemo_DeviceControlActivity_jSSVEPCfilter(
+Java_com_yeolabgt_mahmoodms_emgimpedance_DeviceControlActivity_jSSVEPCfilter(
         JNIEnv *env, jobject jobject1, jdoubleArray data) {
     jdouble *X1 = env->GetDoubleArrayElements(data, NULL);
     float Y[1000]; // First two values = Y; last 499 = cPSD
@@ -68,7 +68,7 @@ JNIEXPORT jdoubleArray JNICALL
  * @param jobject1
  * @return array of frequencies (Hz) corresponding to a raw input signal.
  */
-Java_com_yeolabgt_mahmoodms_ecg2chdemo_DeviceControlActivity_jLoadfPSD(
+Java_com_yeolabgt_mahmoodms_emgimpedance_DeviceControlActivity_jLoadfPSD(
         JNIEnv *env, jobject jobject1, jint sampleRate) {
     jdoubleArray m_result = env->NewDoubleArray(sampleRate);
     double fPSD[sampleRate];
@@ -82,7 +82,7 @@ Java_com_yeolabgt_mahmoodms_ecg2chdemo_DeviceControlActivity_jLoadfPSD(
 
 extern "C" {
 JNIEXPORT jint JNICALL
-Java_com_yeolabgt_mahmoodms_ecg2chdemo_DeviceControlActivity_jmainInitialization(
+Java_com_yeolabgt_mahmoodms_emgimpedance_DeviceControlActivity_jmainInitialization(
         JNIEnv *env, jobject obj, jboolean initialize) {
     if (!(bool) initialize) {
         downsample_250Hz_initialize();

@@ -1,4 +1,4 @@
-package com.yeolabgt.mahmoodms.ecg2chdemo
+package com.yeolabgt.mahmoodms.emgimpedance
 
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
@@ -514,6 +514,8 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
                 mPrimarySaveDataFile!!.saveDoubleArray(mCh1!!.dataBufferDoubles!!)
                 addToGraphBuffer(mCh1!!, mGraphAdapterCh1) //Array is destroyed in this step
             }
+            // TODO: Classification every x seconds:
+
         }
 
 //        if (mCh1!!.chEnabled && mCh2!!.chEnabled) {

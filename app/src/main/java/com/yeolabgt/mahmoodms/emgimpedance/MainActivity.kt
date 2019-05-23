@@ -1,4 +1,4 @@
-package com.yeolabgt.mahmoodms.ecg2chdemo
+package com.yeolabgt.mahmoodms.emgimpedance
 
 import android.Manifest
 import android.app.Activity
@@ -19,11 +19,9 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.ListView
 import android.widget.Toast
 

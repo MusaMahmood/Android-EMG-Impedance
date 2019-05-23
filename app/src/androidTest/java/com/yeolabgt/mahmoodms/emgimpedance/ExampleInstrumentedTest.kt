@@ -1,4 +1,4 @@
-package com.yeolabgt.mahmoodms.ecg2chdemo
+package com.yeolabgt.mahmoodms.emgimpedance
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

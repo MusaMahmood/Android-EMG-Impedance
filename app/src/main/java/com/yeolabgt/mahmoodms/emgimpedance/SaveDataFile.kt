@@ -1,4 +1,4 @@
-package com.yeolabgt.mahmoodms.ecg2chdemo
+package com.yeolabgt.mahmoodms.emgimpedance
 
 import android.os.Environment
 import android.util.Log
