@@ -69,18 +69,19 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
     private var menu: Menu? = null
     //Data throughput counter
     private var mLastTime: Long = 0
-    private var mLastTime2: Long = 0
     private var points = 0
-    private var points2 = 0
     private val mTimerHandler = Handler()
     private var mTimerEnabled = false
     //Data Variables:
-    private val batteryWarning = 20//
+    private val batteryWarning = 20
     private var dataRate: Double = 0.toDouble()
     // Graph Downsampling
     private var graphBufferIndex = 0
     private lateinit var graphBuffer: DoubleArray
     private var graphBufferMaxIndex = 1
+    // Graphing FFT:
+    private var mFFTFrequency = DoubleArray(800)
+    private var mLastIndex = 0
 
     private val mTimeStamp: String
         get() = SimpleDateFormat("yyyy.MM.dd_HH.mm.ss", Locale.US).format(Date())
@@ -159,6 +160,7 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
 
     public override fun onResume() {
         jmainInitialization(true)
+        mFFTFrequency = jLoadfFFT()
         if (mRedrawer != null) {
             mRedrawer!!.start()
         }
@@ -295,7 +297,7 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
         mGraphAdapterCh2!!.setxAxisIncrementFromSampleRate(mSampleRate)
 
         mGraphAdapterCh1!!.setSeriesHistoryDataPoints(1250)
-        mGraphAdapterCh2!!.setSeriesHistoryDataPoints(1250)
+        mGraphAdapterCh2!!.setSeriesHistoryDataPoints(800)
     }
 
     private fun setNameAddress(name_action: String?, address_action: String?) {
@@ -495,7 +497,7 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
 
     override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
         if (mCh1 == null || mCh2 == null) {
-            mCh1 = DataChannel(false, mMSBFirst, 1 * mSampleRate)
+            mCh1 = DataChannel(false, mMSBFirst, 4 * mSampleRate)
             mCh2 = DataChannel(false, mMSBFirst, 1 * mSampleRate)
         }
 
@@ -514,22 +516,16 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
                 mPrimarySaveDataFile!!.saveDoubleArray(mCh1!!.dataBufferDoubles!!)
                 addToGraphBuffer(mCh1!!, mGraphAdapterCh1) //Array is destroyed in this step
             }
-            // TODO: Classification every x seconds:
+            if (mCh1!!.totalDataPointsReceived > mLastIndex + 8000) {
+                mLastIndex = mCh1!!.totalDataPointsReceived
+                val fftData = jextractFFT(mCh1!!.classificationBuffer)
+                // TODO: Plot (mFFTFrequency, mResult)
 
+                // TODO: Extract  max (around 999:1001 Hz) or Idx 396:404
+
+                
+            }
         }
-
-//        if (mCh1!!.chEnabled && mCh2!!.chEnabled) {
-//            mEEGConnectedAllChannels = true
-//            mCh1!!.chEnabled = false
-//            mCh2!!.chEnabled = false
-//            if (mCh1!!.characteristicDataPacketBytes != null && mCh2!!.characteristicDataPacketBytes != null) {
-//                mPrimarySaveDataFile!!.writeToDisk(mCh1!!.characteristicDataPacketBytes, mCh2!!.characteristicDataPacketBytes)
-//                if (mPrimarySaveDataFile!!.mLinesWrittenCurrentFile > 1048576) {
-//                    mPrimarySaveDataFile!!.terminateDataFileWriter()
-//                    createNewFile()
-//                }
-//            }
-//        }
     }
 
     private fun addToGraphBuffer(dataChannel: DataChannel, graphAdapter: GraphAdapter?) {
@@ -711,11 +707,11 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
         }
     }
 
-//    private external fun jSSVEPCfilter(data: DoubleArray): FloatArray
+    private external fun jLoadfFFT(): DoubleArray
 
     private external fun jmainInitialization(initialize: Boolean): Int
 
-//    private external fun jecgVarFilter(data_array: DoubleArray, sampleRate: Double, windowLength: Double): FloatArray
+    private external fun jextractFFT(data: DoubleArray): DoubleArray
 
     companion object {
         const val HZ = "0 Hz"

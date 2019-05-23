@@ -121,9 +121,6 @@ constructor(directory: String, fileName: String, byteResolution: Int, increment:
     }
 
     fun saveDoubleArray(vararg doubleArrays: DoubleArray) {
-        val columns = doubleArrays.size
-        val rows = doubleArrays[0].size
-        Log.e(TAG, "rows: $rows, colns: $columns")
         try {
             exportFile(*doubleArrays)
         } catch (e: IOException) {
