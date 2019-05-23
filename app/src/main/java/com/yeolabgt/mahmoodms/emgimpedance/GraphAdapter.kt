@@ -33,12 +33,12 @@ internal class GraphAdapter
         this.seriesHistoryDataPoints = seriesHistoryDataPoints
     }
 
-    fun addDataPointTimeDomain(data: Double, index: Int) {
-        if (this.plotData) plot(index.toDouble() * xAxisIncrement, data)
+    fun addDataPointTimeDomain(x: Double, y: Double) {
+        if (this.plotData) plotAlt(x, y)
     }
 
-    fun addDataPointTimeDomainAlt(data: Double, index: Int) {
-        if (this.plotData) plotAlt(index.toDouble() * xAxisIncrement, data)
+    fun addDataPointTimeDomain(data: Double, index: Int) {
+        if (this.plotData) plot(index.toDouble() * xAxisIncrement, data)
     }
 
     fun setxAxisIncrementFromSampleRate(sampleRate: Int) {
@@ -74,7 +74,7 @@ internal class GraphAdapter
         while (series!!.size() > seriesHistoryDataPoints - 1) {
             series!!.removeLast()
         }
-        series!!.addLast(x, y)
+        series!!.addFirst(x, y)
     }
 
     companion object {

@@ -235,8 +235,8 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
     }
 
     private fun createNewFile() {
-        val directory = "/ECGData"
-        val fileNameTimeStamped = "ECGData_" + mTimeStamp + "_" + mSampleRate.toString() + "Hz"
+        val directory = "/EMGData"
+        val fileNameTimeStamped = "EMGData_" + mTimeStamp + "_" + mSampleRate.toString() + "Hz"
         if (mPrimarySaveDataFile == null) {
             Log.e(TAG, "fileTimeStamp: $fileNameTimeStamped")
             mPrimarySaveDataFile = SaveDataFile(directory, fileNameTimeStamped,
@@ -262,8 +262,8 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
 
     private fun setupGraph() {
         // Initialize our XYPlot reference:
-        mGraphAdapterCh1 = GraphAdapter(1250, "ECG Data Ch 1", false, Color.BLUE) //Color.parseColor("#19B52C") also, RED, BLUE, etc.
-        mGraphAdapterCh2 = GraphAdapter(1250, "ECG Data Ch 2", false, Color.RED) //Color.parseColor("#19B52C") also, RED, BLUE, etc.
+        mGraphAdapterCh1 = GraphAdapter(1250, "EMG Data Ch 1", false, Color.BLUE) //Color.parseColor("#19B52C") also, RED, BLUE, etc.
+        mGraphAdapterCh2 = GraphAdapter(1250, "FFT Data Ch 1", false, Color.RED) //Color.parseColor("#19B52C") also, RED, BLUE, etc.
         mGraphAdapterMotionAX = GraphAdapter(375, "Acc X", false, Color.RED)
         mGraphAdapterMotionAY = GraphAdapter(375, "Acc Y", false, Color.GREEN)
         mGraphAdapterMotionAZ = GraphAdapter(375, "Acc Z", false, Color.BLUE)
@@ -274,7 +274,7 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
         mGraphAdapterMotionAY?.setPointWidth(2.toFloat())
         mGraphAdapterMotionAZ?.setPointWidth(2.toFloat())
         mTimeDomainPlotAdapterCh1 = XYPlotAdapter(findViewById(R.id.ecgTimeDomainXYPlot), false, if (mSampleRate < 1000) 4 * mSampleRate else 2000)
-        mTimeDomainPlotAdapterCh2 = XYPlotAdapter(findViewById(R.id.ecgTimeDomainXYPlot2),  false, if(mSampleRate < 1000) 4 * mSampleRate else 2000)
+        mTimeDomainPlotAdapterCh2 = XYPlotAdapter(findViewById(R.id.ecgTimeDomainXYPlot2), "f (Hz)", "|P1(f)|", domainIncrement = 50.0)
         mTimeDomainPlotAdapterCh1?.xyPlot?.addSeries(mGraphAdapterCh1!!.series, mGraphAdapterCh1!!.lineAndPointFormatter)
         mTimeDomainPlotAdapterCh2?.xyPlot?.addSeries(mGraphAdapterCh2!!.series, mGraphAdapterCh2!!.lineAndPointFormatter)
         mMotionDataPlotAdapter = XYPlotAdapter(findViewById(R.id.motionDataPlot), "Time (s)", "Acc (g)", 375.0)
@@ -520,11 +520,21 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
                 mLastIndex = mCh1!!.totalDataPointsReceived
                 val fftData = jextractFFT(mCh1!!.classificationBuffer)
                 // TODO: Plot (mFFTFrequency, mResult)
-
+                addToGraph(mGraphAdapterCh2, mFFTFrequency, fftData)
                 // TODO: Extract  max (around 999:1001 Hz) or Idx 396:404
+                // ArrayCopy → Max(_)
+                val selectFFTData = DoubleArray(9)
+                System.arraycopy(fftData, 396, selectFFTData, 0, 9)
+                val FFT1kHzMax = selectFFTData.max()
+                // Add to plot #3
 
-                
             }
+        }
+    }
+
+    private fun addToGraph(graphAdapter: GraphAdapter?, x: DoubleArray, y: DoubleArray) {
+        for (i in 0 until 800) {
+            graphAdapter?.addDataPointTimeDomain(x[i], y[i])
         }
     }
 
@@ -538,7 +548,7 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
                 if (graphBufferIndex==graphBufferMaxIndex) {
                     graphBufferIndex = 0
                     graphAdapter!!.addDataPointTimeDomain(graphBuffer.average(), dataChannel.totalDataPointsReceived - dataChannel.dataBufferDoubles!!.size + dataIncrement)
-                    dataIncrement += 16
+                    dataIncrement += (mSampleRate/250)
                 }
                 i += 1
             }
